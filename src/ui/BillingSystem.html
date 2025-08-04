@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Billing System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9fafb;
+      margin: 0;
+      padding: 20px;
+      color: #111827;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    header {
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 2em;
+      margin-bottom: 5px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+
+    .card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #ccc3;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    .field {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    select,
+    input {
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #d1d5db;
+    }
+
+    .customer-info {
+      background: #f3f4f6;
+      padding: 10px;
+      border-radius: 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border: 1px solid #e5e7eb;
+      padding: 8px;
+      text-align: left;
+    }
+
+    .btn {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn.add {
+      background-color: #38bdf8;
+      color: white;
+    }
+
+    .btn.remove {
+      background: #f87171;
+      color: white;
+    }
+
+    .btn.generate {
+      background-color: #0ea5e9;
+      color: white;
+      width: 100%;
+      margin-top: 15px;
+    }
+
+    .btn.print {
+      background-color: #f3f4f6;
+      color: #111;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      margin: 10px 0;
+    }
+
+    .total {
+      font-size: 1.1em;
+    }
+
+    .badge {
+      background: #e0f2fe;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.9em;
+    }
+
+    .bill-entry {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Billing System</h1>
+    <p>Create and manage customer bills</p>
+  </header>
+
+  <main class="grid">
+    <section class="bill-form">
+      <div class="card">
+        <h2>Create New Bill</h2>
+        <div class="form-row">
+          <div class="field">
+            <label>Select Customer</label>
+            <select>
+              <option disabled selected>Choose customer</option>
+              <option>John Doe (CUST-001)</option>
+              <option>Jane Smith (CUST-002)</option>
+            </select>
+          </div>
+          <div class="customer-info">
+            <p><strong>John Doe</strong></p>
+            <p>123 Main Street</p>
+            <p>+94 71 234 5678</p>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="field">
+            <label>Select Item</label>
+            <select>
+              <option disabled selected>Choose item</option>
+              <option>Pen - Rs. 50 (Stock: 20)</option>
+              <option>Notebook - Rs. 150 (Stock: 15)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Quantity</label>
+            <input type="number" min="1" value="1" />
+          </div>
+          <button class="btn add">➕ Add Item</button>
+        </div>
+
+        <h3>Bill Items</h3>
+        <table>
+          <thead>
+          <tr>
+            <th>Item</th>
+            <th>Unit Price</th>
+            <th>Quantity</th>
+            <th>Total</th>
+            <th>Action</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>Pen</td>
+            <td>Rs. 50</td>
+            <td>2</td>
+            <td>Rs. 100</td>
+            <td><button class="btn remove">🗑️</button></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <aside class="summary">
+      <div class="card">
+        <h2>Bill Summary</h2>
+        <div class="summary-item"><span>Subtotal:</span><span>Rs. 100</span></div>
+        <div class="summary-item"><span>Tax (10%):</span><span>Rs. 10</span></div>
+        <hr />
+        <div class="summary-item total"><strong>Total:</strong><strong>Rs. 110</strong></div>
+        <button class="btn generate">🧾 Generate Bill</button>
+        <button class="btn print">🖨️ Print Bill</button>
+      </div>
+
+      <div class="card recent-bills">
+        <h2>Recent Bills</h2>
+        <div class="bill-entry">
+          <div>
+            <p class="bill-no">BILL-001</p>
+            <p class="customer">John Doe</p>
+          </div>
+          <span class="badge">Rs. 110</span>
+        </div>
+      </div>
+    </aside>
+  </main>
+</div>
+</body>
+</html>
