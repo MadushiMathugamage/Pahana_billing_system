@@ -1,0 +1,377 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: HP
+  Date: 06/08/2025
+  Time: 12:50
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Add Customer Form</title>
+    <style>
+        /* Basic Reset */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+            Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background: #f9fafb;
+            padding: 2rem;
+            color: #374151;
+        }
+        .container {
+            max-width: 720px;
+            margin: auto;
+            background: #fff;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(90deg, #047857, #065f46);
+            padding: 1rem 1.5rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h2 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        /* Icons - simple placeholders */
+        .icon-user {
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 0.5rem;
+            display: inline-block;
+        }
+        .btn-close {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0.25rem;
+            font-weight: bold;
+            font-size: 1.25rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s;
+        }
+        .btn-close:hover {
+            background: rgba(255 255 255 / 0.2);
+        }
+
+        form {
+            padding: 1.5rem;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.875rem;
+            color: #374151;
+        }
+        .radio-label input[type="radio"] {
+            accent-color: #047857; /* emerald */
+            cursor: pointer;
+        }
+
+        .grid-2-cols {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        /* Make company full width if shown */
+        .full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 0.4rem;
+            color: #374151;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid #d1d5db;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+        }
+
+        .error-message {
+            color: #dc2626;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+
+        .footer-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        .btn-cancel,
+        .btn-submit {
+            padding: 0.75rem 2rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s, color 0.3s;
+            border: none;
+        }
+        .btn-cancel {
+            background: transparent;
+            color: #4b5563;
+        }
+        .btn-cancel:hover {
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+        .btn-submit {
+            background: linear-gradient(90deg, #047857, #065f46);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 10px 15px rgba(4, 120, 87, 0.4);
+        }
+        .btn-submit:hover {
+            background: linear-gradient(90deg, #065f46, #047857);
+            box-shadow: 0 12px 20px rgba(4, 120, 87, 0.6);
+        }
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Icon inside button */
+        .btn-submit svg {
+            width: 16px;
+            height: 16px;
+            stroke: white;
+            stroke-width: 2;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .grid-2-cols {
+                grid-template-columns: 1fr;
+            }
+            .full-width {
+                grid-column: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+    <div class="header">
+        <h2 id="dialogTitle"><span class="icon-user"></span> Add New Customer</h2>
+        <button class="btn-close" aria-label="Close form">&times;</button>
+    </div>
+
+    <form id="addCustomerForm" novalidate>
+        <div class="radio-group" role="radiogroup" aria-labelledby="customerTypeLabel">
+            <label class="radio-label" for="individual">
+                <input type="radio" id="individual" name="customerType" value="individual" checked />
+                Individual
+            </label>
+            <label class="radio-label" for="business">
+                <input type="radio" id="business" name="customerType" value="business" />
+                Business
+            </label>
+        </div>
+
+        <div class="grid-2-cols">
+            <div>
+                <label for="firstName">First Name *</label>
+                <input type="text" id="firstName" name="firstName" placeholder="John" required />
+                <p class="error-message" aria-live="polite"></p>
+            </div>
+            <div>
+                <label for="lastName">Last Name *</label>
+                <input type="text" id="lastName" name="lastName" placeholder="Doe" required />
+                <p class="error-message" aria-live="polite"></p>
+            </div>
+
+            <div class="full-width" id="companyField" style="display:none;">
+                <label for="company">Company Name *</label>
+                <input type="text" id="company" name="company" placeholder="Acme Corporation" />
+                <p class="error-message" aria-live="polite"></p>
+            </div>
+
+            <div>
+                <label for="email">Email Address *</label>
+                <input type="email" id="email" name="email" placeholder="john@example.com" required />
+                <p class="error-message" aria-live="polite"></p>
+            </div>
+            <div>
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" placeholder="+1 (555) 123-4567" />
+                <p class="error-message" aria-live="polite"></p>
+            </div>
+
+            <div class="full-width">
+                <label for="address">Address</label>
+                <input type="text" id="address" name="address" placeholder="123 Main Street" />
+            </div>
+            <div>
+                <label for="city">City</label>
+                <input type="text" id="city" name="city" placeholder="New York" />
+            </div>
+            <div>
+                <label for="state">State</label>
+                <select id="state" name="state">
+                    <option value="">Select state</option>
+                    <option>AL</option><option>AK</option><option>AZ</option><option>AR</option>
+                    <option>CA</option><option>CO</option><option>CT</option><option>DE</option>
+                    <option>FL</option><option>GA</option><option>HI</option><option>ID</option>
+                    <option>IL</option><option>IN</option><option>IA</option><option>KS</option>
+                    <option>KY</option><option>LA</option><option>ME</option><option>MD</option>
+                    <option>MA</option><option>MI</option><option>MN</option><option>MS</option>
+                    <option>MO</option><option>MT</option><option>NE</option><option>NV</option>
+                    <option>NH</option><option>NJ</option><option>NM</option><option>NY</option>
+                    <option>NC</option><option>ND</option><option>OH</option><option>OK</option>
+                    <option>OR</option><option>PA</option><option>RI</option><option>SC</option>
+                    <option>SD</option><option>TN</option><option>TX</option><option>UT</option>
+                    <option>VT</option><option>VA</option><option>WA</option><option>WV</option>
+                    <option>WI</option><option>WY</option>
+                </select>
+            </div>
+
+            <div class="full-width">
+                <label for="zipCode">ZIP Code</label>
+                <input type="text" id="zipCode" name="zipCode" placeholder="10001" />
+            </div>
+        </div>
+
+        <div class="footer-buttons">
+            <button type="button" class="btn-cancel">Cancel</button>
+            <button type="submit" class="btn-submit">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                     stroke-linecap="round" stroke-linejoin="round" class="icon">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h11l5 5v9a2 2 0 0 1-2 2z"></path>
+                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                    <polyline points="7 3 7 8 15 8"></polyline>
+                </svg>
+                Save Customer
+            </button>
+        </div>
+    </form>
+
+    <script>
+        // Show/hide company input based on customerType selection
+        const radios = document.querySelectorAll('input[name="customerType"]');
+        const companyField = document.getElementById('companyField');
+
+        radios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                if (radio.value === 'business' && radio.checked) {
+                    companyField.style.display = 'block';
+                    document.getElementById('company').setAttribute('required', 'required');
+                } else if (radio.value === 'individual' && radio.checked) {
+                    companyField.style.display = 'none';
+                    document.getElementById('company').removeAttribute('required');
+                }
+            });
+        });
+
+        // Optional: close button functionality
+        document.querySelector('.btn-close').addEventListener('click', () => {
+            alert('Close button clicked! Implement modal close logic here.');
+        });
+
+        // Add basic validation & error handling (simplified example)
+        document.getElementById('addCustomerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Clear previous errors
+            const errorElements = this.querySelectorAll('.error-message');
+            errorElements.forEach(el => el.textContent = '');
+
+            let valid = true;
+
+            // Validate required fields
+            const firstName = this.firstName.value.trim();
+            if (!firstName) {
+                this.firstName.nextElementSibling.textContent = 'First name is required';
+                valid = false;
+            }
+
+            const lastName = this.lastName.value.trim();
+            if (!lastName) {
+                this.lastName.nextElementSibling.textContent = 'Last name is required';
+                valid = false;
+            }
+
+            const email = this.email.value.trim();
+            if (!email) {
+                this.email.nextElementSibling.textContent = 'Email is required';
+                valid = false;
+            } else {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    this.email.nextElementSibling.textContent = 'Please enter a valid email address';
+                    valid = false;
+                }
+            }
+
+            // If business, company is required
+            const customerType = this.querySelector('input[name="customerType"]:checked').value;
+            if (customerType === 'business') {
+                const company = this.company.value.trim();
+                if (!company) {
+                    this.company.nextElementSibling.textContent = 'Company name is required for business customers';
+                    valid = false;
+                }
+            }
+
+            if (valid) {
+                alert('Form submitted successfully! Implement form save logic here.');
+                this.reset();
+                companyField.style.display = 'none';
+            }
+        });
+    </script>
+</div>
+</body>
+</html>
+
