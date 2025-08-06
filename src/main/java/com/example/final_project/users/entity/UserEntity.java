@@ -1,8 +1,9 @@
 package com.example.final_project.users.entity;
 
-import com.example.final_project.basic.Role;
+import com.example.final_project.common.base.SuperEntity;
+import com.example.final_project.common.basic.Role;
 
-public class UserEntity {
+public class UserEntity implements SuperEntity {
     private int user_id;
     private String username;
     private String password;
