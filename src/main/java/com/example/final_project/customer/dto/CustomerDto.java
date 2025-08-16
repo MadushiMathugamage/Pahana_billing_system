@@ -10,6 +10,15 @@ public class CustomerDto implements SuperDto {
     private String telephone;
     private int units_consumed;
 
+    public CustomerDto(int customer_id, String account_number, String name, String address, String telephone, int units_consumed) {
+        this.customer_id = customer_id;
+        this.account_number = account_number;
+        this.name = name;
+        this.address = address;
+        this.telephone = telephone;
+        this.units_consumed = units_consumed;
+    }
+
     public int getCustomer_id() {
         return customer_id;
     }
