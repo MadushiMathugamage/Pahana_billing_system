@@ -19,6 +19,10 @@ public class CustomerDto implements SuperDto {
         this.units_consumed = units_consumed;
     }
 
+    public CustomerDto() {
+
+    }
+
     public int getCustomer_id() {
         return customer_id;
     }
