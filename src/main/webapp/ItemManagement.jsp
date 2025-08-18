@@ -1,562 +1,246 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pahana Edu - Sidebar & Item Management with Add Item Form</title>
-
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Item Management</title>
   <style>
-    body, html {
-      margin: 0; padding: 0; height: 100%;
-      font-family: Arial, sans-serif;
-    }
-    .container {
-      display: flex;
-      height: 100vh;
-    }
-    /* Sidebar */
-    .sidebar {
-      width: 260px;
-      background: #fff;
-      border-right: 1px solid #e5e7eb;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-    .sidebar-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 24px;
-      border-bottom: 1px solid #e5e7eb;
-    }
-    .logo-icon {
-      width: 40px; height: 40px;
-      background: #0ea5e9;
-      color: white;
-      border-radius: 8px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .logo-title {
-      margin: 0;
-      font-weight: bold;
-      font-size: 1.1rem;
-      color: #111827;
-    }
-    .logo-subtitle {
-      margin: 0;
-      font-size: 0.875rem;
-      color: #6b7280;
-    }
-    .menu {
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      flex-grow: 1;
-    }
-    .menu-item {
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      padding: 10px 14px;
-      font-size: 0.95rem;
-      color: #4b5563;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border-radius: 6px;
-      text-align: left;
-      transition: background-color 0.2s, color 0.2s;
-    }
-    .menu-item:hover, .menu-item.active {
-      background: #e0f2fe;
-      color: #0369a1;
-    }
-    .sidebar-footer {
-      padding: 16px;
-      border-top: 1px solid #e5e7eb;
-    }
-    .user-box {
-      background: #f9fafb;
-      padding: 12px;
-      border-radius: 8px;
-      margin-bottom: 10px;
-    }
-    .user-name {
-      margin: 0;
-      font-weight: 500;
-      color: #111827;
-      font-size: 0.9rem;
-    }
-    .user-role {
-      margin: 0;
-      font-size: 0.75rem;
-      color: #6b7280;
-      text-transform: capitalize;
-    }
-    .logout-btn {
-      width: 100%;
-      background: transparent;
-      border: 1px solid #fecaca;
-      color: #dc2626;
-      padding: 10px 14px;
-      border-radius: 6px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      transition: background-color 0.2s, color 0.2s;
-    }
-    .logout-btn:hover {
-      background: #fef2f2;
-      color: #b91c1c;
-    }
-    /* Main content */
-    .main-content {
-      flex: 1;
-      background: #f8fafc;
-      padding: 2rem;
-      overflow-y: auto;
-    }
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
-    }
-    .header h1 {
-      margin: 0;
-      font-size: 2rem;
-      color: #111827;
-    }
-    .header p {
-      margin: 0;
-      color: #6b7280;
-    }
-    .btn-add {
-      background: #10b981;
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .btn-add:hover {
-      background: #059e68;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-    th, td {
-      padding: 0.75rem 1rem;
-      text-align: left;
-      border-bottom: 1px solid #e5e7eb;
-      vertical-align: middle;
-    }
-    th {
-      background: #f3f4f6;
-    }
-    .badge {
-      padding: 0.25rem 0.5rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      display: inline-block;
-    }
-    .badge-outline {
-      border: 1px solid #cbd5e1;
-      color: #374151;
-    }
-    .badge-secondary {
-      background: #e5e7eb;
-      color: #374151;
-    }
-    .badge-green {
-      background: #d1fae5;
-      color: #065f46;
-    }
-    .badge-orange {
-      background: #ffedd5;
-      color: #c2410c;
-    }
-    .badge-red {
-      background: #fee2e2;
-      color: #b91c1c;
-    }
-    .btn-sm {
-      border: none;
-      background: #f3f4f6;
-      padding: 0.4rem;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.8rem;
-      display: inline-flex;
-      align-items: center;
-    }
-    .btn-sm:hover {
-      background: #e5e7eb;
-    }
-    .btn-sm.delete {
-      color: #b91c1c;
-      background: #fee2e2;
-    }
-    .btn-sm.delete:hover {
-      background: #fef2f2;
-    }
-    /* Add Item Form Styles */
-    .add-item-form {
-      background: white;
-      padding: 1.5rem;
-      border-radius: 8px;
-      margin-top: 1rem;
-      max-width: 480px;
-      box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
-    }
-    .form-group {
-      margin-bottom: 1rem;
-    }
-    label {
-      display: block;
-      margin-bottom: 0.25rem;
-      font-weight: 600;
-      color: #374151;
-    }
-    input {
-      width: 100%;
-      padding: 0.5rem 0.75rem;
-      border-radius: 6px;
-      border: 1px solid #d1d5db;
-      font-size: 1rem;
-      color: #111827;
-    }
-    input:focus {
-      outline: none;
-      border-color: #0ea5e9;
-      box-shadow: 0 0 0 3px #bae6fd;
-    }
-    .submit-btn {
-      background: #0ea5e9;
-      border: none;
-      color: white;
-      font-weight: 600;
-      padding: 0.75rem 1rem;
-      border-radius: 6px;
-      cursor: pointer;
-      width: 100%;
-    }
-    .submit-btn:hover {
-      background: #0369a1;
-    }
-    .cancel-btn {
-      background: #f3f4f6;
-      border: none;
-      color: #374151;
-      font-weight: 600;
-      padding: 0.75rem 1rem;
-      border-radius: 6px;
-      cursor: pointer;
-      width: 100%;
-      margin-top: 0.5rem;
-    }
-    .cancel-btn:hover {
-      background: #e5e7eb;
-    }
+    body { font-family: Arial; background:#f9fafb; margin:0; padding:20px; }
+    .container { max-width:1200px; margin:auto; }
+    .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+    .btn { padding:8px 16px; border:none; border-radius:6px; cursor:pointer; color:white; transition:.2s; }
+    .btn-add { background:#10b981; }
+    .btn-add:hover { background:#059669; }
+    .btn-outline { background:transparent; border:1px solid #d1d5db; color:#111827; }
+    .btn-outline:hover { background:#f3f4f6; }
+    .btn-red { background:transparent; border:1px solid #dc2626; color:#dc2626; }
+    .btn-red:hover { background:#fee2e2; }
+    .dialog-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.4); display:none; justify-content:center; align-items:center; z-index:50; }
+    .dialog-overlay.active { display:flex; }
+    .dialog { background:white; border-radius:12px; max-width:450px; width:100%; max-height:90vh; overflow-y:auto; padding:24px; box-shadow:0 10px 25px rgba(0,0,0,0.1); }
+    .dialog h2 { margin-bottom:16px; font-size:20px; font-weight:bold; }
+    .dialog label { display:block; margin-top:8px; font-weight:500; }
+    .dialog input, .dialog select { width:100%; padding:8px; border:1px solid #d1d5db; border-radius:6px; margin-top:4px; }
+    .cancel-btn { margin-top:12px; background:none; border:none; color:#6b7280; cursor:pointer; }
+    .cancel-btn:hover { color:#111827; }
+    table { width:100%; border-collapse:collapse; background:white; border-radius:12px; overflow:hidden; }
+    th, td { padding:12px 16px; text-align:left; border-bottom:1px solid #e5e7eb; }
+    th { background:#f9fafb; font-size:12px; font-weight:600; text-transform:uppercase; color:#6b7280; }
+    tr:hover { background:#f3f4f6; }
+    .badge { padding:4px 8px; border-radius:8px; font-size:12px; font-weight:500; display:inline-block; }
+    .badge-secondary { background:#d1fae5; color:#065f46; }
+    .badge-low { background:#fed7aa; color:#9a3412; }
+    .badge-destructive { background:#fecaca; color:#991b1b; }
+    .flex { display:flex; gap:8px; align-items:center; }
+    .flex-col { flex-direction:column; }
+    .search-wrapper { position:relative; width:250px; }
+    .search-wrapper input { width:100%; padding:6px 12px 6px 32px; border:1px solid #d1d5db; border-radius:6px; }
+    .search-wrapper svg { position:absolute; left:8px; top:50%; transform:translateY(-50%); width:16px; height:16px; color:#9ca3af; }
   </style>
 </head>
 <body>
 
 <div class="container">
 
-  <!-- Sidebar -->
-  <aside class="sidebar">
+  <div class="header">
     <div>
-      <div class="sidebar-header">
-        <div class="logo-icon">
-          <i data-lucide="book-open"></i>
-        </div>
-        <div>
-          <h1 class="logo-title">Pahana Edu</h1>
-          <p class="logo-subtitle">Management System</p>
-        </div>
-      </div>
-
-      <nav class="menu">
-        <button class="menu-item active" data-page="dashboard">
-          <i data-lucide="bar-chart-3"></i>
-          Dashboard
-        </button>
-        <button class="menu-item" data-page="customers">
-          <i data-lucide="users"></i>
-          Customers
-        </button>
-        <button class="menu-item" data-page="items">
-          <i data-lucide="package"></i>
-          Items
-        </button>
-        <button class="menu-item" data-page="billing">
-          <i data-lucide="receipt"></i>
-          Billing
-        </button>
-        <button class="menu-item" data-page="help">
-          <i data-lucide="help-circle"></i>
-          Help
-        </button>
-      </nav>
+      <h1>Item Management</h1>
+      <p>Manage inventory and item information</p>
     </div>
+    <button class="btn btn-add" id="openDialogBtn">+ Add Item</button>
+  </div>
 
-    <div class="sidebar-footer">
-      <div class="user-box">
-        <p class="user-name">Madushi Mathugamage</p>
-        <p class="user-role">admin</p>
-      </div>
-      <button class="logout-btn">
-        <i data-lucide="log-out"></i>
-        Logout
-      </button>
-    </div>
-  </aside>
-
-  <!-- Main content -->
-  <main class="main-content">
-
-    <!-- Dashboard Page -->
-    <section class="page" data-page="dashboard">
-      <h1>Dashboard</h1>
-      <p>Welcome to the dashboard!</p>
-    </section>
-
-    <!-- Customers Page -->
-    <section class="page" data-page="customers" style="display:none;">
-      <h1>Customers</h1>
-      <p>Customer management coming soon.</p>
-    </section>
-
-    <!-- Items Page -->
-    <section class="page" data-page="items" style="display:none;">
-      <div class="header">
-        <div>
-          <h1>Item Management</h1>
-          <p>Manage inventory and item information</p>
-        </div>
-        <button id="add-item-btn" class="btn-add">
-          <svg data-lucide="plus"></svg>
-          Add Item
-        </button>
-      </div>
-
-      <!-- Add Item Form - initially hidden -->
-      <form id="add-item-form" class="add-item-form" style="display:none;">
-        <div class="form-group">
-          <label for="item-code">Code</label>
-          <input type="text" id="item-code" name="code" required placeholder="e.g. BK004" />
-        </div>
-        <div class="form-group">
-          <label for="item-name">Name</label>
-          <input type="text" id="item-name" name="name" required placeholder="Item name" />
-        </div>
-        <div class="form-group">
-          <label for="item-category">Category</label>
-          <input type="text" id="item-category" name="category" required placeholder="Category" />
-        </div>
-        <div class="form-group">
-          <label for="item-price">Price</label>
-          <input type="number" id="item-price" name="price" required placeholder="Price in Rs." />
-        </div>
-        <div class="form-group">
-          <label for="item-stock">Stock</label>
-          <input type="number" id="item-stock" name="stock" required placeholder="Stock quantity" />
-        </div>
-        <button type="submit" class="submit-btn">Add Item</button>
-        <button type="button" class="cancel-btn" id="cancel-add-item">Cancel</button>
+  <div class="dialog-overlay" id="dialog">
+    <div class="dialog">
+      <h2 id="dialogTitle">Add New Item</h2>
+      <form id="itemForm">
+        <label>Item Code</label>
+        <input type="text" id="code" required>
+        <label>Item Name</label>
+        <input type="text" id="name" required>
+        <label>Description</label>
+        <input type="text" id="description">
+        <label>Category</label>
+        <select id="category">
+          <option value="">Select category</option>
+          <option value="Textbooks">Textbooks</option>
+          <option value="Literature">Literature</option>
+          <option value="Stationery">Stationery</option>
+          <option value="Reference">Reference</option>
+          <option value="Notebooks">Notebooks</option>
+          <option value="Art Supplies">Art Supplies</option>
+        </select>
+        <label>Price</label>
+        <input type="number" step="0.01" id="price" required>
+        <label>Stock Quantity</label>
+        <input type="number" id="stock" required>
+        <label>Author (Optional)</label>
+        <input type="text" id="author">
+        <label>ISBN (Optional)</label>
+        <input type="text" id="isbn">
+        <button type="submit" class="btn btn-add">Submit</button>
       </form>
+      <button class="cancel-btn" id="closeDialogBtn">Cancel</button>
+    </div>
+  </div>
 
-      <table>
-        <thead>
-        <tr>
-          <th>Code</th>
-          <th>Name</th>
-          <th>Category</th>
-          <th>Price</th>
-          <th>Stock</th>
-          <th>Status</th>
-          <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody id="item-table-body">
-        <tr>
-          <td><span class="badge badge-outline">BK001</span></td>
-          <td>
-            <strong>Advanced Mathematics</strong><br />
-            <p class="desc">Grade 12 Mathematics Textbook</p>
-          </td>
-          <td><span class="badge badge-secondary">Textbooks</span></td>
-          <td>Rs. 1,500</td>
-          <td>25</td>
-          <td><span class="badge badge-green">In Stock</span></td>
-          <td>
-            <button class="btn-sm"><svg data-lucide="edit-2"></svg></button>
-            <button class="btn-sm delete"><svg data-lucide="trash-2"></svg></button>
-          </td>
-        </tr>
-        <tr>
-          <td><span class="badge badge-outline">BK002</span></td>
-          <td>
-            <strong>English Literature</strong><br />
-            <p class="desc">A/L Poetry Collection</p>
-          </td>
-          <td><span class="badge badge-secondary">Literature</span></td>
-          <td>Rs. 980</td>
-          <td>5</td>
-          <td><span class="badge badge-orange">Low Stock</span></td>
-          <td>
-            <button class="btn-sm"><svg data-lucide="edit-2"></svg></button>
-            <button class="btn-sm delete"><svg data-lucide="trash-2"></svg></button>
-          </td>
-        </tr>
-        <tr>
-          <td><span class="badge badge-outline">BK003</span></td>
-          <td>
-            <strong>Science Book</strong><br />
-            <p class="desc">Practical Science for Grade 10</p>
-          </td>
-          <td><span class="badge badge-secondary">Textbooks</span></td>
-          <td>Rs. 1,200</td>
-          <td>0</td>
-          <td><span class="badge badge-red">Out of Stock</span></td>
-          <td>
-            <button class="btn-sm"><svg data-lucide="edit-2"></svg></button>
-            <button class="btn-sm delete"><svg data-lucide="trash-2"></svg></button>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </section>
+  <div class="flex justify-between" style="margin-bottom:10px;">
+    <h2 id="itemCount">Items (0)</h2>
+    <div class="flex gap-4">
+      <div class="search-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <input type="text" id="searchInput" placeholder="Search items...">
+      </div>
+      <select id="filterCategory">
+        <option value="all">All Categories</option>
+        <option value="Textbooks">Textbooks</option>
+        <option value="Literature">Literature</option>
+        <option value="Stationery">Stationery</option>
+        <option value="Reference">Reference</option>
+        <option value="Notebooks">Notebooks</option>
+        <option value="Art Supplies">Art Supplies</option>
+      </select>
+    </div>
+  </div>
 
-    <!-- Billing Page -->
-    <section class="page" data-page="billing" style="display:none;">
-      <h1>Billing</h1>
-      <p>Billing system coming soon.</p>
-    </section>
+  <table>
+    <thead>
+    <tr>
+      <th>Code</th>
+      <th>Name</th>
+      <th>Category</th>
+      <th>Price</th>
+      <th>Stock</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody id="itemTableBody"></tbody>
+  </table>
 
-    <!-- Help Page -->
-    <section class="page" data-page="help" style="display:none;">
-      <h1>Help</h1>
-      <p>Help information here.</p>
-    </section>
-
-  </main>
 </div>
 
 <script>
-  lucide.createIcons();
+  let items = [];
+  let editingItemId = null;
 
-  // Sidebar navigation logic
-  const menuButtons = document.querySelectorAll('.menu-item');
-  const pages = document.querySelectorAll('.page');
-  menuButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      // Remove active from all menu buttons
-      menuButtons.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+  const dialog = document.getElementById('dialog');
+  const dialogTitle = document.getElementById('dialogTitle');
+  const itemForm = document.getElementById('itemForm');
+  const itemTableBody = document.getElementById('itemTableBody');
+  const itemCount = document.getElementById('itemCount');
 
-      const pageToShow = btn.getAttribute('data-page');
-      pages.forEach(page => {
-        if (page.getAttribute('data-page') === pageToShow) {
-          page.style.display = 'block';
-        } else {
-          page.style.display = 'none';
-        }
-      });
+  const codeInput = document.getElementById('code');
+  const nameInput = document.getElementById('name');
+  const descInput = document.getElementById('description');
+  const categoryInput = document.getElementById('category');
+  const priceInput = document.getElementById('price');
+  const stockInput = document.getElementById('stock');
+  const authorInput = document.getElementById('author');
+  const isbnInput = document.getElementById('isbn');
 
-      // Hide add item form if switching away from items page
-      if (pageToShow !== 'items') {
-        document.getElementById('add-item-form').style.display = 'none';
-      }
-    });
-  });
+  const searchInput = document.getElementById('searchInput');
+  const filterCategory = document.getElementById('filterCategory');
 
-  // Add Item button toggles add item form visibility
-  const addItemBtn = document.getElementById('add-item-btn');
-  const addItemForm = document.getElementById('add-item-form');
-  const cancelAddItemBtn = document.getElementById('cancel-add-item');
-
-  addItemBtn.addEventListener('click', () => {
-    addItemForm.style.display = 'block';
-    // Scroll form into view
-    addItemForm.scrollIntoView({ behavior: 'smooth' });
-  });
-
-  cancelAddItemBtn.addEventListener('click', () => {
-    addItemForm.style.display = 'none';
-  });
-
-  // Handle form submit (for demo, just alert and reset)
-  addItemForm.addEventListener('submit', e => {
-    e.preventDefault();
-
-    // Collect form data
-    const code = document.getElementById('item-code').value.trim();
-    const name = document.getElementById('item-name').value.trim();
-    const category = document.getElementById('item-category').value.trim();
-    const price = parseFloat(document.getElementById('item-price').value);
-    const stock = parseInt(document.getElementById('item-stock').value);
-
-    if (!code || !name || !category || isNaN(price) || isNaN(stock)) {
-      alert('Please fill all fields correctly.');
-      return;
+  function openDialog(edit=false, item=null){
+    dialog.classList.add('active');
+    if(edit && item){
+      dialogTitle.textContent='Edit Item';
+      editingItemId=item.id;
+      codeInput.value=item.code;
+      nameInput.value=item.name;
+      descInput.value=item.description;
+      categoryInput.value=item.category;
+      priceInput.value=item.price;
+      stockInput.value=item.stock;
+      authorInput.value=item.author;
+      isbnInput.value=item.isbn;
+    } else {
+      dialogTitle.textContent='Add New Item';
+      editingItemId=null;
+      itemForm.reset();
     }
+  }
 
-    // Add new item row to table
-    const tbody = document.getElementById('item-table-body');
-    const tr = document.createElement('tr');
+  function closeDialog(){
+    dialog.classList.remove('active');
+    itemForm.reset();
+    editingItemId=null;
+  }
 
-    // Determine status badge class
-    let statusClass = 'badge-green';
-    let statusText = 'In Stock';
-    if(stock === 0){
-      statusClass = 'badge-red';
-      statusText = 'Out of Stock';
-    } else if(stock < 10){
-      statusClass = 'badge-orange';
-      statusText = 'Low Stock';
-    }
+  function getStockBadge(stock){
+    if(stock===0) return '<span class="badge badge-destructive">Out of Stock</span>';
+    if(stock<10) return '<span class="badge badge-low">Low Stock</span>';
+    return '<span class="badge badge-secondary">In Stock</span>';
+  }
 
-    tr.innerHTML = `
-      <td><span class="badge badge-outline">${code}</span></td>
-      <td><strong>${name}</strong><br><p class="desc"></p></td>
-      <td><span class="badge badge-secondary">${category}</span></td>
-      <td>Rs. ${price.toFixed(2)}</td>
-      <td>${stock}</td>
-      <td><span class="badge ${statusClass}">${statusText}</span></td>
+  function renderItems(){
+    const search = searchInput.value.toLowerCase();
+    const categoryFilterValue = filterCategory.value;
+    const filtered = items.filter(item=>
+            (item.name.toLowerCase().includes(search) || item.code.toLowerCase().includes(search)) &&
+            (categoryFilterValue==='all' || item.category===categoryFilterValue)
+    );
+    itemTableBody.innerHTML='';
+    filtered.forEach(item=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`
+      <td>${item.code}</td>
+      <td>${item.name}<br><small>${item.description || ''}</small></td>
+      <td>${item.category}</td>
+      <td>${item.price}</td>
+      <td>${item.stock}</td>
+      <td>${getStockBadge(item.stock)}</td>
       <td>
-        <button class="btn-sm"><svg data-lucide="edit-2"></svg></button>
-        <button class="btn-sm delete"><svg data-lucide="trash-2"></svg></button>
+        <button class="btn-outline edit-btn">Edit</button>
+        <button class="btn-red delete-btn">Delete</button>
       </td>
     `;
+      tr.querySelector('.edit-btn').addEventListener('click',()=>openDialog(true,item));
+      tr.querySelector('.delete-btn').addEventListener('click',()=>deleteItem(item.id));
+      itemTableBody.appendChild(tr);
+    });
+    itemCount.textContent=`Items (${filtered.length})`;
+  }
 
-    tbody.appendChild(tr);
+  function deleteItem(id){
+    if(confirm("Are you sure you want to delete this item?")){
+      items = items.filter(i=>i.id!==id);
+      renderItems();
+    }
+  }
 
-    lucide.createIcons(); // re-create icons inside new elements
-
-    // Reset and hide form
-    addItemForm.reset();
-    addItemForm.style.display = 'none';
+  itemForm.addEventListener('submit', e=>{
+    e.preventDefault();
+    const newItem={
+      id: editingItemId || Date.now().toString(),
+      code: codeInput.value,
+      name: nameInput.value,
+      description: descInput.value,
+      category: categoryInput.value,
+      price: parseFloat(priceInput.value),
+      stock: parseInt(stockInput.value),
+      author: authorInput.value,
+      isbn: isbnInput.value
+    };
+    if(editingItemId){
+      items = items.map(i=>i.id===editingItemId? newItem:i);
+    } else {
+      items.push(newItem);
+    }
+    renderItems();
+    closeDialog();
   });
+
+  document.getElementById('openDialogBtn').addEventListener('click', ()=>openDialog());
+  document.getElementById('closeDialogBtn').addEventListener('click', closeDialog);
+  searchInput.addEventListener('input', renderItems);
+  filterCategory.addEventListener('change', renderItems);
+
+  renderItems();
 </script>
 
 </body>
