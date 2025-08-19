@@ -33,6 +33,7 @@ public class UserEntity implements SuperEntity {
         this.password = password;
     }
 
+    // ✅ return type should be Role
     public Role getRole() {
         return role;
     }
