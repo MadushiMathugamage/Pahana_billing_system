@@ -1,247 +1,374 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Item Management</title>
   <style>
-    body { font-family: Arial; background:#f9fafb; margin:0; padding:20px; }
-    .container { max-width:1200px; margin:auto; }
-    .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
-    .btn { padding:8px 16px; border:none; border-radius:6px; cursor:pointer; color:white; transition:.2s; }
-    .btn-add { background:#10b981; }
-    .btn-add:hover { background:#059669; }
-    .btn-outline { background:transparent; border:1px solid #d1d5db; color:#111827; }
-    .btn-outline:hover { background:#f3f4f6; }
-    .btn-red { background:transparent; border:1px solid #dc2626; color:#dc2626; }
-    .btn-red:hover { background:#fee2e2; }
-    .dialog-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.4); display:none; justify-content:center; align-items:center; z-index:50; }
-    .dialog-overlay.active { display:flex; }
-    .dialog { background:white; border-radius:12px; max-width:450px; width:100%; max-height:90vh; overflow-y:auto; padding:24px; box-shadow:0 10px 25px rgba(0,0,0,0.1); }
-    .dialog h2 { margin-bottom:16px; font-size:20px; font-weight:bold; }
-    .dialog label { display:block; margin-top:8px; font-weight:500; }
-    .dialog input, .dialog select { width:100%; padding:8px; border:1px solid #d1d5db; border-radius:6px; margin-top:4px; }
-    .cancel-btn { margin-top:12px; background:none; border:none; color:#6b7280; cursor:pointer; }
-    .cancel-btn:hover { color:#111827; }
-    table { width:100%; border-collapse:collapse; background:white; border-radius:12px; overflow:hidden; }
-    th, td { padding:12px 16px; text-align:left; border-bottom:1px solid #e5e7eb; }
-    th { background:#f9fafb; font-size:12px; font-weight:600; text-transform:uppercase; color:#6b7280; }
-    tr:hover { background:#f3f4f6; }
-    .badge { padding:4px 8px; border-radius:8px; font-size:12px; font-weight:500; display:inline-block; }
-    .badge-secondary { background:#d1fae5; color:#065f46; }
-    .badge-low { background:#fed7aa; color:#9a3412; }
-    .badge-destructive { background:#fecaca; color:#991b1b; }
-    .flex { display:flex; gap:8px; align-items:center; }
-    .flex-col { flex-direction:column; }
-    .search-wrapper { position:relative; width:250px; }
-    .search-wrapper input { width:100%; padding:6px 12px 6px 32px; border:1px solid #d1d5db; border-radius:6px; }
-    .search-wrapper svg { position:absolute; left:8px; top:50%; transform:translateY(-50%); width:16px; height:16px; color:#9ca3af; }
+    :root{
+      --bg:#f9fafb;--card:#ffffff;--text:#111827;--muted:#6b7280;--border:#e5e7eb;--border-2:#d1d5db;--primary:#10b981;--primary-hover:#059669;--danger:#dc2626;--danger-bg:#fee2e2;--danger-border:#fecaca;
+      --green-bg:#d1fae5;--green-text:#065f46;--orange-bg:#ffedd5;--orange-text:#9a3412;--red-bg:#fee2e2;--red-text:#991b1b;
+      --shadow:0 1px 2px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.1)
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,"Noto Sans",sans-serif;line-height:1.4;padding:2rem}
+    h1{margin:0 0 .25rem;font-size:1.875rem;font-weight:800}
+    p.lead{margin:.25rem 0 0;color:var(--muted)}
+
+    .page-head{display:flex;gap:1rem;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+    .btn{display:inline-flex;align-items:center;gap:.5rem;border:none;border-radius:.5rem;padding:.625rem 1rem;background:var(--primary);color:#fff;cursor:pointer;font-weight:600}
+    .btn:hover{background:var(--primary-hover)}
+    .btn-outline{background:#fff;border:1px solid var(--border-2);color:#111827}
+    .btn-outline.danger{color:var(--danger);border-color:var(--danger-border)}
+    .btn-outline:hover{background:#f3f4f6}
+
+    .card{background:var(--card);border-radius:.75rem;box-shadow:var(--shadow)}
+    .card-head{padding:1rem;border-bottom:1px solid var(--border)}
+    .card-body{padding:1rem}
+
+    .row{display:flex;flex-direction:column;gap:1rem}
+    @media (min-width:768px){.row{flex-direction:row;align-items:center;justify-content:space-between}}
+
+    .controls{display:flex;gap:1rem;flex-wrap:wrap}
+
+    .input, select{border:1px solid var(--border-2);border-radius:.5rem;padding:.625rem .75rem;font:inherit}
+    .input.search{padding-left:2.25rem;min-width:16rem}
+    .search-wrap{position:relative}
+    .search-icon{position:absolute;left:.6rem;top:50%;transform:translateY(-50%);width:1rem;height:1rem;opacity:.5}
+
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:.75rem;border-bottom:1px solid var(--border);text-align:left;font-size:.925rem;vertical-align:top}
+    tr:hover{background:#f9fafb}
+
+    .badge{display:inline-block;padding:.25rem .5rem;border-radius:.375rem;border:1px solid var(--border-2);font-size:.75rem}
+    .badge-secondary{background:#f3f4f6;color:#374151}
+    .badge-green{background:var(--green-bg);color:var(--green-text)}
+    .badge-orange{background:var(--orange-bg);color:var(--orange-text)}
+    .badge-red{background:var(--red-bg);color:var(--red-text)}
+
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+
+    /* Modal (using <dialog>) */
+    dialog{border:none;border-radius:.75rem;box-shadow:var(--shadow);padding:0;width:min(560px,92vw)}
+    dialog::backdrop{background:rgba(0,0,0,.35)}
+    .modal-head{padding:1rem 1rem .5rem;border-bottom:1px solid var(--border)}
+    .modal-title{margin:0;font-size:1.125rem;font-weight:700}
+    .modal-body{padding:1rem;max-height:70vh;overflow:auto}
+    .grid{display:grid;gap:1rem}
+    .grid-2{grid-template-columns:1fr}
+    @media (min-width:600px){.grid-2{grid-template-columns:1fr 1fr}}
+    .field label{display:block;font-size:.85rem;color:#374151;margin-bottom:.4rem}
+    .field input, .field select{width:100%}
+    .modal-foot{display:flex;gap:.6rem;justify-content:flex-end;padding:0 1rem 1rem}
+
+    /* Toast */
+    .toast{position:fixed;right:1rem;bottom:1rem;display:flex;flex-direction:column;gap:.5rem;z-index:50}
+    .toast-item{background:#111827;color:#fff;padding:.6rem .8rem;border-radius:.5rem;box-shadow:var(--shadow);opacity:.95}
+
+    /* Utility */
+    .muted{color:var(--muted)}
+    .hidden{display:none}
   </style>
 </head>
 <body>
-
-<div class="container">
-
-  <div class="header">
-    <div>
-      <h1>Item Management</h1>
-      <p>Manage inventory and item information</p>
-    </div>
-    <button class="btn btn-add" id="openDialogBtn">+ Add Item</button>
+<header class="page-head">
+  <div>
+    <h1>Item Management</h1>
+    <p class="lead">Manage inventory and item information</p>
   </div>
+  <button class="btn" id="btnAdd"><span aria-hidden>➕</span> Add Item</button>
+</header>
 
-  <div class="dialog-overlay" id="dialog">
-    <div class="dialog">
-      <h2 id="dialogTitle">Add New Item</h2>
-      <form id="itemForm">
-        <label>Item Code</label>
-        <input type="text" id="code" required>
-        <label>Item Name</label>
-        <input type="text" id="name" required>
-        <label>Description</label>
-        <input type="text" id="description">
-        <label>Category</label>
-        <select id="category">
-          <option value="">Select category</option>
-          <option value="Textbooks">Textbooks</option>
-          <option value="Literature">Literature</option>
-          <option value="Stationery">Stationery</option>
-          <option value="Reference">Reference</option>
-          <option value="Notebooks">Notebooks</option>
-          <option value="Art Supplies">Art Supplies</option>
+<section class="card">
+  <div class="card-head">
+    <div class="row">
+      <h2 id="itemsTitle">Items (0)</h2>
+      <div class="controls">
+        <div class="search-wrap">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden>
+            <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input id="searchInput" class="input search" type="search" placeholder="Search items..." />
+        </div>
+        <select id="categoryFilter" class="input">
+          <option value="all">All Categories</option>
         </select>
-        <label>Price</label>
-        <input type="number" step="0.01" id="price" required>
-        <label>Stock Quantity</label>
-        <input type="number" id="stock" required>
-        <label>Author (Optional)</label>
-        <input type="text" id="author">
-        <label>ISBN (Optional)</label>
-        <input type="text" id="isbn">
-        <button type="submit" class="btn btn-add">Submit</button>
-      </form>
-      <button class="cancel-btn" id="closeDialogBtn">Cancel</button>
-    </div>
-  </div>
-
-  <div class="flex justify-between" style="margin-bottom:10px;">
-    <h2 id="itemCount">Items (0)</h2>
-    <div class="flex gap-4">
-      <div class="search-wrapper">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-        </svg>
-        <input type="text" id="searchInput" placeholder="Search items...">
       </div>
-      <select id="filterCategory">
-        <option value="all">All Categories</option>
-        <option value="Textbooks">Textbooks</option>
-        <option value="Literature">Literature</option>
-        <option value="Stationery">Stationery</option>
-        <option value="Reference">Reference</option>
-        <option value="Notebooks">Notebooks</option>
-        <option value="Art Supplies">Art Supplies</option>
-      </select>
     </div>
   </div>
+  <div class="card-body">
+    <div class="table-wrap">
+      <table id="itemsTable" aria-describedby="itemsTitle">
+        <thead>
+        <tr>
+          <th>Code</th>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody id="itemsTbody">
+        <!-- rows injected by JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
 
-  <table>
-    <thead>
-    <tr>
-      <th>Code</th>
-      <th>Name</th>
-      <th>Category</th>
-      <th>Price</th>
-      <th>Stock</th>
-      <th>Status</th>
-      <th>Actions</th>
-    </tr>
-    </thead>
-    <tbody id="itemTableBody"></tbody>
-  </table>
+<!-- Modal: Add/Edit Item -->
+<dialog id="itemDialog" aria-labelledby="dialogTitle">
+  <form id="itemForm" method="dialog">
+    <div class="modal-head">
+      <h3 id="dialogTitle" class="modal-title">Add New Item</h3>
+    </div>
+    <div class="modal-body">
+      <div class="grid grid-2">
+        <div class="field">
+          <label for="code">Item Code *</label>
+          <input id="code" name="code" class="input" placeholder="BK001" required />
+        </div>
+        <div class="field">
+          <label for="name">Item Name *</label>
+          <input id="name" name="name" class="input" placeholder="Advanced Mathematics" required />
+        </div>
+        <div class="field" style="grid-column:1/-1;">
+          <label for="description">Description</label>
+          <input id="description" name="description" class="input" placeholder="Grade 12 Mathematics Textbook" />
+        </div>
+        <div class="field">
+          <label for="category">Category *</label>
+          <select id="category" name="category" class="input" required></select>
+        </div>
+        <div class="field">
+          <label for="price">Price (Rs.) *</label>
+          <input id="price" name="price" class="input" type="number" step="0.01" min="0" placeholder="1500" required />
+        </div>
+        <div class="field">
+          <label for="stock">Stock Quantity *</label>
+          <input id="stock" name="stock" class="input" type="number" min="0" step="1" placeholder="25" required />
+        </div>
+        <div class="field">
+          <label for="author">Author (Optional)</label>
+          <input id="author" name="author" class="input" placeholder="Prof. K. Wijeratne" />
+        </div>
+        <div class="field">
+          <label for="isbn">ISBN (Optional)</label>
+          <input id="isbn" name="isbn" class="input" placeholder="978-955-123-456-7" />
+        </div>
+      </div>
+      <input type="hidden" id="editingId" />
+    </div>
+    <div class="modal-foot">
+      <button type="button" class="btn btn-outline" id="btnCancel">Cancel</button>
+      <button type="submit" class="btn" id="btnSubmit">Save Item</button>
+    </div>
+  </form>
+</dialog>
 
-</div>
+<div class="toast" id="toast"></div>
 
 <script>
-  let items = [];
-  let editingItemId = null;
+  // ====== Data & State ======
+  const categories = ['Textbooks','Literature','Stationery','Reference','Notebooks','Art Supplies'];
+  const categoryFilterEl = document.getElementById('categoryFilter');
+  const categorySelectEl  = document.getElementById('category');
 
-  const dialog = document.getElementById('dialog');
-  const dialogTitle = document.getElementById('dialogTitle');
-  const itemForm = document.getElementById('itemForm');
-  const itemTableBody = document.getElementById('itemTableBody');
-  const itemCount = document.getElementById('itemCount');
+  // Populate category controls
+  categories.forEach(c => {
+    const opt1 = document.createElement('option'); opt1.value=c; opt1.textContent=c; categoryFilterEl.appendChild(opt1);
+    const opt2 = document.createElement('option'); opt2.value=c; opt2.textContent=c; categorySelectEl.appendChild(opt2);
+  });
 
-  const codeInput = document.getElementById('code');
-  const nameInput = document.getElementById('name');
-  const descInput = document.getElementById('description');
-  const categoryInput = document.getElementById('category');
-  const priceInput = document.getElementById('price');
-  const stockInput = document.getElementById('stock');
-  const authorInput = document.getElementById('author');
-  const isbnInput = document.getElementById('isbn');
+  const LS_KEY = 'items_store_v1';
+  /** @type {Array<{id:string, code:string, name:string, description?:string, category:string, price:number, stock:number, author?:string, isbn?:string}>} */
+  let items = JSON.parse(localStorage.getItem(LS_KEY) || 'null') || [
+    { id: crypto.randomUUID(), code:'BK001', name:'Advanced Mathematics', description:'Grade 12 Mathematics Textbook', category:'Textbooks', price:1500, stock:25, author:'Prof. K. Wijeratne', isbn:'978-955-123-456-7' },
+    { id: crypto.randomUUID(), code:'ST045', name:'Blue Pen', description:'Smooth ink ballpoint pen', category:'Stationery', price:50, stock:5 },
+    { id: crypto.randomUUID(), code:'NB102', name:'A4 Notebook', description:'200 pages ruled', category:'Notebooks', price:350, stock:0 }
+  ];
 
-  const searchInput = document.getElementById('searchInput');
-  const filterCategory = document.getElementById('filterCategory');
+  let searchTerm = '';
+  let categoryFilter = 'all';
 
-  function openDialog(edit=false, item=null){
-    dialog.classList.add('active');
-    if(edit && item){
-      dialogTitle.textContent='Edit Item';
-      editingItemId=item.id;
-      codeInput.value=item.code;
-      nameInput.value=item.name;
-      descInput.value=item.description;
-      categoryInput.value=item.category;
-      priceInput.value=item.price;
-      stockInput.value=item.stock;
-      authorInput.value=item.author;
-      isbnInput.value=item.isbn;
-    } else {
-      dialogTitle.textContent='Add New Item';
-      editingItemId=null;
-      itemForm.reset();
-    }
+  // ====== Utilities ======
+  const nf = new Intl.NumberFormat('en-LK');
+  function formatPrice(v){ return 'Rs. ' + nf.format(v); }
+
+  function save(){ localStorage.setItem(LS_KEY, JSON.stringify(items)); }
+
+  function toast(msg){
+    const box = document.getElementById('toast');
+    const el = document.createElement('div');
+    el.className = 'toast-item';
+    el.textContent = msg;
+    box.appendChild(el);
+    setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .4s'; }, 2400);
+    setTimeout(()=>{ el.remove(); }, 2800);
   }
 
-  function closeDialog(){
-    dialog.classList.remove('active');
-    itemForm.reset();
-    editingItemId=null;
+  function stockBadge(stock){
+    const span = document.createElement('span');
+    span.classList.add('badge');
+    if(stock === 0){ span.classList.add('badge-red'); span.textContent = 'Out of Stock'; }
+    else if(stock < 10){ span.classList.add('badge-orange'); span.textContent = 'Low Stock'; }
+    else { span.classList.add('badge-green'); span.textContent = 'In Stock'; }
+    return span;
   }
 
-  function getStockBadge(stock){
-    if(stock===0) return '<span class="badge badge-destructive">Out of Stock</span>';
-    if(stock<10) return '<span class="badge badge-low">Low Stock</span>';
-    return '<span class="badge badge-secondary">In Stock</span>';
-  }
-
-  function renderItems(){
-    const search = searchInput.value.toLowerCase();
-    const categoryFilterValue = filterCategory.value;
-    const filtered = items.filter(item=>
-            (item.name.toLowerCase().includes(search) || item.code.toLowerCase().includes(search)) &&
-            (categoryFilterValue==='all' || item.category===categoryFilterValue)
-    );
-    itemTableBody.innerHTML='';
-    filtered.forEach(item=>{
-      const tr=document.createElement('tr');
-      tr.innerHTML=`
-      <td>${item.code}</td>
-      <td>${item.name}<br><small>${item.description || ''}</small></td>
-      <td>${item.category}</td>
-      <td>${item.price}</td>
-      <td>${item.stock}</td>
-      <td>${getStockBadge(item.stock)}</td>
-      <td>
-        <button class="btn-outline edit-btn">Edit</button>
-        <button class="btn-red delete-btn">Delete</button>
-      </td>
-    `;
-      tr.querySelector('.edit-btn').addEventListener('click',()=>openDialog(true,item));
-      tr.querySelector('.delete-btn').addEventListener('click',()=>deleteItem(item.id));
-      itemTableBody.appendChild(tr);
+  // ====== Rendering ======
+  function getFiltered(){
+    const term = searchTerm.trim().toLowerCase();
+    return items.filter(it => {
+      const matchesSearch = !term || (
+              (it.name||'').toLowerCase().includes(term) ||
+              (it.code||'').toLowerCase().includes(term) ||
+              (it.category||'').toLowerCase().includes(term)
+      );
+      const matchesCategory = categoryFilter === 'all' || it.category === categoryFilter;
+      return matchesSearch && matchesCategory;
     });
-    itemCount.textContent=`Items (${filtered.length})`;
   }
 
-  function deleteItem(id){
-    if(confirm("Are you sure you want to delete this item?")){
-      items = items.filter(i=>i.id!==id);
-      renderItems();
-    }
+  function render(){
+    const tbody = document.getElementById('itemsTbody');
+    tbody.innerHTML = '';
+    const data = getFiltered();
+    document.getElementById('itemsTitle').textContent = `Items (${data.length})`;
+
+    data.forEach(it => {
+      const tr = document.createElement('tr');
+
+      // Code
+      const tdCode = document.createElement('td');
+      const codeBadge = document.createElement('span');
+      codeBadge.className = 'badge mono';
+      codeBadge.textContent = it.code;
+      tdCode.appendChild(codeBadge);
+      tr.appendChild(tdCode);
+
+      // Name + desc
+      const tdName = document.createElement('td');
+      const nm = document.createElement('p'); nm.style.fontWeight = '600'; nm.textContent = it.name; tdName.appendChild(nm);
+      if(it.description){ const ds = document.createElement('p'); ds.className='muted'; ds.style.fontSize = '.8rem'; ds.textContent = it.description; tdName.appendChild(ds);}
+      tr.appendChild(tdName);
+
+      // Category
+      const tdCat = document.createElement('td');
+      const catBadge = document.createElement('span'); catBadge.className='badge badge-secondary'; catBadge.textContent = it.category; tdCat.appendChild(catBadge);
+      tr.appendChild(tdCat);
+
+      // Price
+      const tdPrice = document.createElement('td'); tdPrice.style.fontWeight='600'; tdPrice.textContent = formatPrice(it.price); tr.appendChild(tdPrice);
+
+      // Stock
+      const tdStock = document.createElement('td'); tdStock.textContent = it.stock; tr.appendChild(tdStock);
+
+      // Status
+      const tdStatus = document.createElement('td'); tdStatus.appendChild(stockBadge(it.stock)); tr.appendChild(tdStatus);
+
+      // Actions
+      const tdAct = document.createElement('td');
+      const editBtn = document.createElement('button'); editBtn.className='btn btn-outline'; editBtn.textContent='Edit'; editBtn.addEventListener('click',()=> openEdit(it.id));
+      const delBtn  = document.createElement('button'); delBtn.className='btn btn-outline danger'; delBtn.textContent='Delete'; delBtn.addEventListener('click',()=> removeItem(it.id));
+      tdAct.append(editBtn, document.createTextNode(' '), delBtn);
+      tr.appendChild(tdAct);
+
+      tbody.appendChild(tr);
+    });
   }
 
-  itemForm.addEventListener('submit', e=>{
+  // ====== Modal & Form ======
+  const dlg = document.getElementById('itemDialog');
+  const form = document.getElementById('itemForm');
+  const btnAdd = document.getElementById('btnAdd');
+  const btnCancel = document.getElementById('btnCancel');
+  const dialogTitle = document.getElementById('dialogTitle');
+
+  function resetForm(){ form.reset(); document.getElementById('editingId').value=''; }
+
+  function openAdd(){
+    resetForm();
+    dialogTitle.textContent = 'Add New Item';
+    document.getElementById('btnSubmit').textContent = 'Add Item';
+    if(typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open','');
+  }
+
+  function openEdit(id){
+    const it = items.find(x=>x.id===id); if(!it) return;
+    resetForm();
+    dialogTitle.textContent = 'Edit Item';
+    document.getElementById('btnSubmit').textContent = 'Update Item';
+    document.getElementById('editingId').value = it.id;
+    document.getElementById('code').value = it.code || '';
+    document.getElementById('name').value = it.name || '';
+    document.getElementById('description').value = it.description || '';
+    document.getElementById('category').value = it.category || '';
+    document.getElementById('price').value = it.price ?? '';
+    document.getElementById('stock').value = it.stock ?? '';
+    document.getElementById('author').value = it.author || '';
+    document.getElementById('isbn').value = it.isbn || '';
+    if(typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open','');
+  }
+
+  function closeDialog(){ if(dlg.open) dlg.close(); dlg.removeAttribute('open'); }
+
+  btnAdd.addEventListener('click', openAdd);
+  btnCancel.addEventListener('click', (e)=>{ e.preventDefault(); closeDialog(); });
+
+  form.addEventListener('submit', (e)=>{
     e.preventDefault();
-    const newItem={
-      id: editingItemId || Date.now().toString(),
-      code: codeInput.value,
-      name: nameInput.value,
-      description: descInput.value,
-      category: categoryInput.value,
-      price: parseFloat(priceInput.value),
-      stock: parseInt(stockInput.value),
-      author: authorInput.value,
-      isbn: isbnInput.value
+    // Validate
+    const data = {
+      id: document.getElementById('editingId').value || crypto.randomUUID(),
+      code: document.getElementById('code').value.trim(),
+      name: document.getElementById('name').value.trim(),
+      description: document.getElementById('description').value.trim(),
+      category: document.getElementById('category').value,
+      price: parseFloat(document.getElementById('price').value),
+      stock: parseInt(document.getElementById('stock').value,10),
+      author: document.getElementById('author').value.trim(),
+      isbn: document.getElementById('isbn').value.trim()
     };
-    if(editingItemId){
-      items = items.map(i=>i.id===editingItemId? newItem:i);
-    } else {
-      items.push(newItem);
+
+    if(!data.code || !data.name || !data.category || isNaN(data.price) || isNaN(data.stock)){
+      toast('Please fill all required fields correctly.');
+      return;
     }
-    renderItems();
+
+    const existingIdx = items.findIndex(x=>x.id === data.id);
+    if(existingIdx >= 0){
+      items[existingIdx] = data;
+      toast('Item Updated');
+    } else {
+      items.push(data);
+      toast('Item Added');
+    }
+    save();
+    render();
     closeDialog();
   });
 
-  document.getElementById('openDialogBtn').addEventListener('click', ()=>openDialog());
-  document.getElementById('closeDialogBtn').addEventListener('click', closeDialog);
-  searchInput.addEventListener('input', renderItems);
-  filterCategory.addEventListener('change', renderItems);
+  // ====== Delete ======
+  function removeItem(id){
+    const it = items.find(x=>x.id===id);
+    if(!it) return;
+    const ok = confirm(`Delete item "${it.name}"?`);
+    if(!ok) return;
+    items = items.filter(x=>x.id!==id);
+    save();
+    render();
+    toast('Item Deleted');
+  }
 
-  renderItems();
+  // ====== Search & Filter ======
+  document.getElementById('searchInput').addEventListener('input', (e)=>{ searchTerm = e.target.value; render(); });
+  categoryFilterEl.addEventListener('change', (e)=>{ categoryFilter = e.target.value; render(); });
+
+  // ====== Init ======
+  render();
 </script>
-
 </body>
-</html>  fix this code
+</html>
