@@ -1,56 +1,71 @@
-<script>
-  const form = document.getElementById('loginForm');
-  const loginBtn = document.getElementById('loginButton');
-  const toast = document.getElementById('toast');
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pahana Edu - Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            min-height: 100vh;
+        }
 
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    loginBtn.disabled = true;
-    loginBtn.textContent = 'Signing in...';
+        .sidebar {
+            width: 220px;
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+        }
 
-    const username = document.getElementById('username').value.trim();
-    const password = document.getElementById('password').value.trim();
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-    setTimeout(() => {
-      let success = false;
-      let message = '';
+        .sidebar a {
+            display: block;
+            color: white;
+            padding: 12px;
+            margin: 8px 0;
+            text-decoration: none;
+            background: #34495e;
+            border-radius: 6px;
+        }
 
-      if (username === 'admin' && password === 'admin123') {
-        success = true;
-        message = 'Welcome Admin to Pahana Edu!';
-        showToast(message, success);
+        .sidebar a:hover {
+            background: #1abc9c;
+        }
 
-        // ✅ Redirect to admin dashboard
-        setTimeout(() => {
-          window.location.href = "dashboard.jsp";
-        }, 1500);
+        .main {
+            flex: 1;
+            padding: 20px;
+            background: #ecf0f1;
+        }
 
-      } else if (username === 'employee' && password === 'emp123') {
-        success = true;
-        message = 'Welcome Employee to Pahana Edu!';
-        showToast(message, success);
+        .main h1 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+<!-- Sidebar -->
+<div class="sidebar">
+    <h2>Pahana Edu</h2>
+    <!-- Navigation buttons -->
+    <a href="Dashboard.jsp">🏠 Dashboard</a>
+    <a href="CustomerManagement.jsp">👤 Manage Customers</a>
+    <a href="ItemManagement.jsp">📦 Manage Items</a>
+    <a href="BillingManagement.jsp">🧾 Manage Billing</a>
+    <a href="Reports.jsp">📊 Reports</a>
+</div>
 
-        // ✅ Redirect to employee dashboard
-        setTimeout(() => {
-          window.location.href = "employee-dashboard.jsp";
-        }, 1500);
-
-      } else {
-        message = 'Invalid username or password.';
-        showToast(message, success);
-        loginBtn.disabled = false;
-        loginBtn.textContent = 'Sign In';
-      }
-    }, 1000);
-  });
-
-  function showToast(message, success) {
-    toast.textContent = message;
-    toast.className = success ? 'toast-success' : 'toast-error';
-    toast.style.display = 'block';
-
-    setTimeout(() => {
-      toast.style.display = 'none';
-    }, 2000);
-  }
-</script>
+<!-- Main Content -->
+<div class="main">
+    <h1>Welcome to Pahana Edu Dashboard</h1>
+    <p>Select a module from the sidebar to continue.</p>
+</div>
+</body>
+</html>

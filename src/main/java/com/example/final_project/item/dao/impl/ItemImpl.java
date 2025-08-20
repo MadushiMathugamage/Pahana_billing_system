@@ -11,31 +11,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemImpl {
-    // Get item by ID
 
+    // Get item by ID
     public ItemDto getItemById(int itemId) {
-        ItemDto ItemDto = null;
+        ItemDto itemDto = null;
         String sql = "SELECT * FROM items WHERE item_id = ?";
-        try (Connection conn = DBConnection.getInstance().getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, itemId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                ItemDto = extractItem(rs);
+                itemDto = extractItem(rs);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return ItemDto;
+        return itemDto;
     }
 
+    // Insert item
     public boolean insertItem(ItemDto itemDto) {
-        String sql = "INSERT INTO items (item_id, item_name, price_per_unit) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO items (item_name, item_price, item_stock) VALUES (?, ?, ?)";
         try (Connection conn = DBConnection.getInstance().getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setInt(1, itemDto.getItem_id()); // Assuming item_id is int
-            ps.setString(2, itemDto.getItem_name());
-            ps.setDouble(3, itemDto.getPrice_per_unit());
+            ps.setString(1, itemDto.getName());      // item_name
+            ps.setDouble(2, itemDto.getPrice());     // item_price
+            ps.setInt(3, itemDto.getStock());        // item_stock
 
             return ps.executeUpdate() > 0;
 
@@ -44,13 +46,20 @@ public class ItemImpl {
         }
         return false;
     }
-    public boolean updateItem(ItemDto itemDto) {
-        String sql = "UPDATE items SET item_id=?, item_name=?, price_per_unit=?, stock=? WHERE item_id=?";
-        try (Connection conn = DBConnection.getInstance().getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, itemDto.getItem_id()); // Assuming item_id is int
-            ps.setString(2, itemDto.getItem_name());
-            ps.setDouble(3, itemDto.getPrice_per_unit());
+
+    // Update item
+    public boolean updateItem(int itemId, ItemDto itemDto) {
+        String sql = "UPDATE items SET item_name=?, item_price=?, item_stock=? WHERE item_id=?";
+        try (Connection conn = DBConnection.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, itemDto.getName());
+            ps.setDouble(2, itemDto.getPrice());
+            ps.setInt(3, itemDto.getStock());
+            ps.setInt(4, itemId);
+
             return ps.executeUpdate() > 0;
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -58,10 +67,10 @@ public class ItemImpl {
     }
 
     // Delete item
-
     public boolean deleteItem(int itemId) {
         String sql = "DELETE FROM items WHERE item_id=?";
-        try (Connection conn = DBConnection.getInstance().getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, itemId);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -70,30 +79,30 @@ public class ItemImpl {
         return false;
     }
 
+    // Get all items
     public List<ItemDto> getAllItems() {
         List<ItemDto> items = new ArrayList<>();
         String sql = "SELECT * FROM items";
-        try (Connection conn = DBConnection.getInstance().getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = DBConnection.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
             while (rs.next()) {
                 items.add(extractItem(rs));
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return items;
     }
 
+    // Extract ItemDto from ResultSet
     private ItemDto extractItem(ResultSet rs) throws SQLException {
         ItemDto itemDto = new ItemDto();
-        itemDto.setItem_id(rs.getInt("item_id"));
-        itemDto.setItem_name(rs.getString("item_name"));
-        itemDto.setPrice_per_unit(rs.getDouble("price_per_unit"));
+        itemDto.setName(rs.getString("item_name"));       // String
+        itemDto.setPrice(rs.getDouble("item_price"));     // double
+        itemDto.setStock(rs.getInt("item_stock"));        // int
         return itemDto;
     }
-
-
-
-
-
-
 }

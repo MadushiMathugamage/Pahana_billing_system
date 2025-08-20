@@ -189,22 +189,17 @@
         const password = document.getElementById('password').value.trim();
 
         setTimeout(() => {
-            let success = false;
-            let message = '';
-
             if (username === 'admin' && password === 'admin123') {
-                success = true;
-                message = 'Welcome Admin to Pahana Edu!';
+                // ✅ Redirect to dashboard.jsp after successful login
+                window.location.href = "dashboard.jsp";
             } else if (username === 'employee' && password === 'emp123') {
-                success = true;
-                message = 'Welcome Employee to Pahana Edu!';
+                window.location.href = "dashboard.jsp"; // can make separate employee dashboard
             } else {
-                message = 'Invalid username or password.';
+                // Show error message
+                showToast('Invalid username or password.', false);
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Sign In';
             }
-
-            showToast(message, success);
-            loginBtn.disabled = false;
-            loginBtn.textContent = 'Sign In';
         }, 1000);
     });
 
@@ -218,5 +213,6 @@
         }, 3000);
     }
 </script>
+
 </body>
 </html>
