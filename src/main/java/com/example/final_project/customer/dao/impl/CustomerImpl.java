@@ -33,12 +33,11 @@ public class CustomerImpl {
         try (Connection conn = DBConnection.getInstance().getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setInt(1, customerDto.getCustomer_id());
-            ps.setString(2, customerDto.getAccount_number());
-            ps.setString(3, customerDto.getName());
-            ps.setString(4, customerDto.getAddress());
-            ps.setString(5, customerDto.getTelephone());
-            ps.setInt(6, customerDto.getUnits_consumed());
+            ps.setInt(1, customerDto.getId());
+            ps.setString(2, customerDto.getName());
+            ps.setString(3, customerDto.getAddress());
+            ps.setString(4, customerDto.getPhone());
+            ps.setString(5, customerDto.getCode());
 
             return ps.executeUpdate() > 0;
 
@@ -51,12 +50,11 @@ public class CustomerImpl {
     public boolean updateCustomer(CustomerDto customerDto) {
         String sql = "UPDATE customers SET id=?, account_number=?, name=?, address=?, telephone=?, units_consumed=? WHERE account_number=?";
         try (Connection conn = DBConnection.getInstance().getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, customerDto.getCustomer_id());
-            ps.setString(2, customerDto.getAccount_number());
+            ps.setInt(1, customerDto.getId());
+            ps.setString(2, customerDto.getPhone());
             ps.setString(3, customerDto.getName());
             ps.setString(4, customerDto.getAddress());
-            ps.setString(5, customerDto.getTelephone());
-            ps.setInt(6, customerDto.getUnits_consumed());
+            ps.setString(5, customerDto.getCode());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -92,12 +90,11 @@ public class CustomerImpl {
 
     private CustomerDto extractCustomer(ResultSet rs) throws SQLException {
         CustomerDto customerDto = new CustomerDto();
-        customerDto.setCustomer_id(rs.getInt("account_no"));
-        customerDto.setAccount_number(rs.getString("name"));
+        customerDto.setId(rs.getInt("account_no"));
+        customerDto.setPhone(rs.getString("name"));
         customerDto.setName(rs.getString("address"));
         customerDto.setAddress(rs.getString("phone"));
-        customerDto.setTelephone(rs.getString("email"));
-        customerDto.setUnits_consumed(rs.getInt("units_consumed"));
+        customerDto.setCode(rs.getString("email"));
 
         return customerDto;
     }
