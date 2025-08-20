@@ -4,7 +4,6 @@ import com.example.final_project.Bill.Impl.BillImpl;
 import com.example.final_project.Bill.Impl.BillItemImpl;
 import com.example.final_project.Bill.model.Bill;
 import com.example.final_project.Bill.model.Billitem;
-
 import com.example.final_project.Bill.observer.BillObsever;
 import com.example.final_project.common.Factory.DAOFactory;
 import com.example.final_project.customer.dao.impl.CustomerImpl;
@@ -15,44 +14,59 @@ import java.util.List;
 
 public class BillingService {
 
-    // Use interface types if DAOFactory returns interfaces
-    private BillImpl billDAO = DAOFactory.getBillDAO();
-    private BillItemImpl billItemDAO = DAOFactory.getBillItemDAO();
-    private CustomerImpl customerDAO = DAOFactory.getCustomerDAO();
+    // DAOs
+    private final BillImpl billDAO = DAOFactory.getBillDAO();
+    private final BillItemImpl billItemDAO = DAOFactory.getBillItemDAO();
+    private final CustomerImpl customerDAO = DAOFactory.getCustomerDAO();
 
-    private List<BillObsever> observers = new ArrayList<>();
+    private final List<BillObsever> observers = new ArrayList<>();
 
     // Add an observer
     public void addObserver(BillObsever observer) {
-        observers.add(observer);
+        if (observer != null) {
+            observers.add(observer);
+        }
     }
 
-    // Create a bill with items
+    /**
+     * Create a bill and insert its items.
+     * Notifies observers after creation.
+     * @param bill Bill object (must not be null)
+     * @param items List of Billitem objects (must not be null or empty)
+     * @return generated billId or -1 if creation fails
+     */
     public int createBillWithItems(Bill bill, List<Billitem> items) {
         if (bill == null || items == null || items.isEmpty()) {
             throw new IllegalArgumentException("Bill or items cannot be null/empty");
         }
 
-        // Insert bill
-        int billId = billDAO.insertBill(bill);
+        int billId = -1;
 
-        if (billId > 0) {
-            // Insert bill items
-            for (Billitem item : items) {
-                item.setBillId(billId);
-                billItemDAO.insertBillItem(item);
+        try {
+            // Insert bill
+            billId = billDAO.insertBill(bill);
+
+            if (billId > 0) {
+                // Insert bill items
+                for (Billitem item : items) {
+                    item.setBillId(billId);
+                    billItemDAO.insertBillItem(item);
+                }
+
+                bill.setBillId(billId);
+
+                // Fetch customer info
+                CustomerDto customer = customerDAO.getCustomerByAccountNo(bill.getAccountNo());
+                String customerContact = (customer != null) ? customer.getName() : null;
+
+                // Notify observers
+                for (BillObsever observer : observers) {
+                    observer.onBillCreated(bill, customerContact);
+                }
             }
-
-            bill.setBillId(billId);
-
-            // Fetch customer email
-            CustomerDto customer = customerDAO.getCustomerByAccountNo(bill.getAccountNo());
-            String customerEmail = (customer != null) ? customer.getTelephone() : null;
-
-            // Notify observers
-            for (BillObsever observer : observers) {
-                observer.onBillCreated(bill, customerEmail);
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            billId = -1; // mark as failed
         }
 
         return billId;
