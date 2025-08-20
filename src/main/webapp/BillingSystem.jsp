@@ -1,11 +1,20 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: HP
-  Date: 06/08/2025
-  Time: 12:51
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.List" %>
+<%@ page import="com.example.final_project.item.dto.ItemDto" %>
+<%@ page import="com.example.final_project.item.service.ItemService" %>
+<%@ page import="java.util.ArrayList" %>
+<%
+  // Fetch all items from DB
+  ItemService itemService = new ItemService();
+  List<ItemDto> items = itemService.getAllItems();
+
+  // If DB not ready, add sample items
+  if (items == null) {
+    items = new ArrayList<>();
+  }
+  items.add(new ItemDto(1, "Pen", 50.0, 20));
+  items.add(new ItemDto(2, "Notebook", 150.0, 15));
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -72,6 +81,7 @@
       background: #f3f4f6;
       padding: 10px;
       border-radius: 6px;
+      margin-top: 10px;
     }
 
     table {
@@ -143,49 +153,60 @@
       border-radius: 6px;
       margin-bottom: 10px;
     }
+
+    .btn:hover {
+      opacity: 0.9;
+    }
+
+    tr:hover {
+      background-color: #f3f4f6;
+    }
   </style>
 </head>
 <body>
 <div class="container">
   <header>
     <h1>Billing System</h1>
-    <p>Create and manage customer bills</p>
   </header>
 
   <main class="grid">
     <section class="bill-form">
       <div class="card">
         <h2>Create New Bill</h2>
+
         <div class="form-row">
           <div class="field">
             <label>Select Customer</label>
-            <select>
+            <select id="customerSelect">
               <option disabled selected>Choose customer</option>
-              <option>John Doe (CUST-001)</option>
-              <option>Jane Smith (CUST-002)</option>
+              <option>John Doe|123 Main Street|+94 71 234 5678</option>
+              <option>Jane Smith|456 Park Street|+94 77 987 6543</option>
             </select>
-          </div>
-          <div class="customer-info">
-            <p><strong>John Doe</strong></p>
-            <p>123 Main Street</p>
-            <p>+94 71 234 5678</p>
+            <div class="customer-info" id="customerInfo">
+              <p><strong>John Doe</strong></p>
+              <p>123 Main Street</p>
+              <p>+94 71 234 5678</p>
+            </div>
           </div>
         </div>
 
         <div class="form-row">
           <div class="field">
             <label>Select Item</label>
-            <select>
+            <select id="itemSelect">
               <option disabled selected>Choose item</option>
-              <option>Pen - Rs. 50 (Stock: 20)</option>
-              <option>Notebook - Rs. 150 (Stock: 15)</option>
+              <% for(ItemDto item : items) { %>
+              <option value="<%= item.getItemId() %>|<%= item.getName() %>|<%= item.getPrice() %>|<%= item.getStock() %>">
+                <%= item.getName() %> - Rs. <%= item.getPrice() %> (Stock: <%= item.getStock() %>)
+              </option>
+              <% } %>
             </select>
           </div>
           <div class="field">
             <label>Quantity</label>
-            <input type="number" min="1" value="1" />
+            <input type="number" id="itemQuantity" min="1" value="1" />
           </div>
-          <button class="btn add">➕ Add Item</button>
+          <button class="btn add" id="addItemBtn" type="button">➕ Add Item</button>
         </div>
 
         <h3>Bill Items</h3>
@@ -199,15 +220,7 @@
             <th>Action</th>
           </tr>
           </thead>
-          <tbody>
-          <tr>
-            <td>Pen</td>
-            <td>Rs. 50</td>
-            <td>2</td>
-            <td>Rs. 100</td>
-            <td><button class="btn remove">🗑️</button></td>
-          </tr>
-          </tbody>
+          <tbody id="billItemsTable"></tbody>
         </table>
       </div>
     </section>
@@ -215,27 +228,76 @@
     <aside class="summary">
       <div class="card">
         <h2>Bill Summary</h2>
-        <div class="summary-item"><span>Subtotal:</span><span>Rs. 100</span></div>
-        <div class="summary-item"><span>Tax (10%):</span><span>Rs. 10</span></div>
+        <div class="summary-item"><span>Subtotal:</span><span id="subtotal">Rs. 0</span></div>
+        <div class="summary-item"><span>Tax (10%):</span><span id="tax">Rs. 0</span></div>
         <hr />
-        <div class="summary-item total"><strong>Total:</strong><strong>Rs. 110</strong></div>
+        <div class="summary-item total"><strong>Total:</strong><strong id="total">Rs. 0</strong></div>
         <button class="btn generate">🧾 Generate Bill</button>
         <button class="btn print">🖨️ Print Bill</button>
-      </div>
-
-      <div class="card recent-bills">
-        <h2>Recent Bills</h2>
-        <div class="bill-entry">
-          <div>
-            <p class="bill-no">BILL-001</p>
-            <p class="customer">John Doe</p>
-          </div>
-          <span class="badge">Rs. 110</span>
-        </div>
       </div>
     </aside>
   </main>
 </div>
+
+<script>
+  const customerSelect = document.getElementById('customerSelect');
+  const customerInfo = document.getElementById('customerInfo');
+  const itemSelect = document.getElementById('itemSelect');
+  const itemQuantity = document.getElementById('itemQuantity');
+  const addItemBtn = document.getElementById('addItemBtn');
+  const billItemsTable = document.getElementById('billItemsTable');
+  const subtotalEl = document.getElementById('subtotal');
+  const taxEl = document.getElementById('tax');
+  const totalEl = document.getElementById('total');
+
+  let subtotal = 0;
+
+  // Update customer info
+  customerSelect.addEventListener('change', () => {
+    const [name, address, phone] = customerSelect.value.split('|');
+    customerInfo.innerHTML = `<p><strong>${name}</strong></p><p>${address}</p><p>${phone}</p>`;
+  });
+
+  // Add item to table
+  addItemBtn.addEventListener('click', () => {
+    if (!itemSelect.value) { alert("Select an item!"); return; }
+
+    const [itemId, itemName, unitPrice, stock] = itemSelect.value.split('|');
+    const quantity = parseInt(itemQuantity.value);
+    const availableStock = parseInt(stock);
+
+    if (quantity < 1) { alert("Quantity must be at least 1"); return; }
+    if (quantity > availableStock) { alert(`Only ${availableStock} in stock`); return; }
+
+    const totalPrice = quantity * parseFloat(unitPrice);
+    subtotal += totalPrice;
+
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${itemName}</td>
+      <td>Rs. ${unitPrice}</td>
+      <td>${quantity}</td>
+      <td>Rs. ${totalPrice}</td>
+      <td><button class="btn remove">🗑️</button></td>
+    `;
+
+    row.querySelector('.remove').addEventListener('click', () => {
+      subtotal -= totalPrice;
+      updateSummary();
+      row.remove();
+    });
+
+    billItemsTable.appendChild(row);
+    updateSummary();
+  });
+
+  function updateSummary() {
+    const tax = subtotal * 0.10;
+    const total = subtotal + tax;
+    subtotalEl.textContent = `Rs. ${subtotal}`;
+    taxEl.textContent = `Rs. ${tax}`;
+    totalEl.textContent = `Rs. ${total}`;
+  }
+</script>
 </body>
 </html>
-
