@@ -42,7 +42,7 @@ public class BillingService {
             // Fetch customer email from DB
 
             CustomerDto customer = customerDAO.getCustomerByAccountNo(bill.getAccountNo());
-            String customerEmail = (customer != null) ? customer.getTelephone() : null;
+            String customerEmail = (customer != null) ? customer.getPhone() : null;
 
             // Notify all observers
 
