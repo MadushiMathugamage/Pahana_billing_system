@@ -116,7 +116,7 @@ CREATE TABLE bill_items (
 );
 2. 🔧 Database Configuration
 // Update DBConnection.java
-private static final String URL = "jdbc:mysql://localhost:3306/pahana_billing";
+private static final String URL = "[jdbc:mysql://localhost:3306/pahana_billing](http://localhost:8080/Final_project_war_exploded/index.jsp)";
 private static final String USER = "your_username";
 private static final String PASSWORD = "your_password";
 3. 📧 Email Configuration
@@ -148,10 +148,10 @@ cp target/pahana-billing.war $TOMCAT_HOME/webapps/
 $TOMCAT_HOME/bin/startup.sh
 
 # Access application
-http://localhost:8080/pahana-billing
+[http://localhost:8080/pahana-billing](http://localhost:8080/Final_project_war_exploded/index.jsp)
 🎯 Usage Guide
 🔑 Login Process
-1. Navigate to: http://localhost:8080/pahana-billing
+1. Navigate to: http://[localhost:8080/pahana-billing](http://localhost:8080/Final_project_war_exploded/index.jsp)
 2. Enter credentials (see default users above)
 3. System redirects based on role:
    - Admin    → /admin/dashboard.jsp
@@ -259,58 +259,3 @@ cp target/*.war $TOMCAT_HOME/webapps/
 # Start server
 $TOMCAT_HOME/bin/startup.sh
 
-# Create initial users
-java -cp "target/classes:lib/*" com.pahana.pahanaedubookshopbilling.service.CreateInitialUsers
-
-# Access application
-open http://localhost:8080/pahana-billing
-🤝 Contributing
-# Fork the repository on GitHub
-git clone [https://github.com/yourusername/pahana-edu-bookshop.git](https://github.com/Jegamohansrisayidan/PahanaEduBookshopBilling.git )
-
-# Create feature branch
-git checkout -b feature/awesome-feature
-
-# Make changes and commit
-git commit -am 'Add awesome feature'
-
-# Push to branch
-git push origin feature/awesome-feature
-
-# Create Pull Request on GitHub
-👨‍💻 Author
-🧑‍💻 Jegamohan Srisayidan
-📧 jegamohansrisayidan@gmail.com  
-🐙 GitHub: @jegamohansrisayidan
-🌍 Location: Sri Lanka
-🐛 Known Issues & Solutions
-⚠️  PDF Generation          → Implement iText or Apache PDFBox
-⚠️  Email App Passwords     → Use Gmail App-specific passwords  
-⚠️  Connection Pooling      → Implement HikariCP or C3P0
-⚠️  JSP Pages              → Create responsive frontend pages
-🚀 Roadmap & Future Enhancements
-📅 Phase 1 (Current)
-✅ Core billing system
-✅ User management
-✅ Email notifications
-
-📅 Phase 2 (Next)
-🔄 REST API development  
-🔄 Modern React frontend
-🔄 Advanced reporting
-🔄 Barcode integration
-
-📅 Phase 3 (Future)
-⏳ Mobile application
-⏳ Multi-store support  
-⏳ Cloud deployment
-⏳ Real-time analytics
-⏳ Customer loyalty program
-📞 Support & Contact
-🆘 Issues: Create GitHub issue
-💬 Discussions: GitHub Discussions  
-📧 Email: jegamohansrisayidan@gmail.com
-⭐ Star this repo if you found it helpful!
-⭐ Star this repository if it helped you! ⭐
-
-Made with ❤️ by Jegamohan Srisayidan
